@@ -1,0 +1,142 @@
+:root {
+  --jogja-red: #006ba6; /* Warna biru gelap untuk nuansa air */
+  --jogja-gold: #83c5be; /* Warna biru kehijauan untuk aksen lembut */
+  --jogja-cream: #edf6f9; /* Warna krem pucat ala langit cerah */
+  --jogja-brown: #3d5a80; /* Warna biru tua pekat untuk footer */
+}
+
+/* Header */
+.header {
+  background: var(--jogja-red) !important;
+  border-bottom: 3px solid var(--jogja-gold);
+}
+
+.sitename {
+  font-family: "Playfair Display", serif;
+  color: var(--jogja-gold) !important;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.navmenu a {
+  color: var(--jogja-cream) !important;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.navmenu a:hover {
+  color: var(--jogja-gold) !important;
+  border-bottom: 2px solid var(--jogja-gold);
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(rgba(74, 97, 126, 0.8), rgba(61, 90, 128, 0.8)), url("assets/img/15-1334671029.png");
+
+  .hero h2 {
+    font-family: "Cinzel", serif;
+    color: var(--jogja-gold);
+    font-size: 3.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Featured Services */
+  .service-item {
+    background: var(--jogja-cream);
+    border: 2px solid var(--jogja-red);
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+  }
+
+  .service-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .service-item h3 {
+    font-family: "Philosopher", sans-serif;
+    color: var(--jogja-red) !important;
+  }
+
+  /* Map Section */
+  .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+
+  .legend {
+    line-height: 18px;
+    color: #555;
+  }
+
+  .legend i {
+    width: 20px;
+    height: 3px;
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  #map {
+    width: 100%;
+    height: 500px;
+    border: 3px solid var(--jogja-red);
+    border-radius: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--jogja-brown) !important;
+    color: var(--jogja-cream);
+    border-top: 3px solid var(--jogja-gold);
+  }
+
+  .footer .sitename {
+    color: var(--jogja-gold) !important;
+  }
+
+  /* Button */
+  .btn-get-started {
+    background: var(--jogja-red);
+    color: var(--jogja-cream) !important;
+    border: 2px solid var(--jogja-gold);
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-family: "Poppins", sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .btn-get-started:hover {
+    background: var(--jogja-gold);
+    color: var(--jogja-red) !important;
+  }
+
+  /* Water Pattern Overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.08;
+    z-index: -1;
+    background-image: url("assets/img/overlay-wave-pattern.png"); /* Overlay motif gelombang air */
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3 {
+    font-family: "Cinzel", serif;
+    color: var(--jogja-red);
+  }
+
+  body {
+    background-color: var(--jogja-cream);
+    font-family: "Poppins", sans-serif;
+  }
+}

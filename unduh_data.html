@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Download Layer WFS - Multi EPSG</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.3.0/ol.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Poppins&family=Raleway&display=swap" rel="stylesheet" />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Vendor CSS -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="assets/css/main.css" rel="stylesheet" />
+
+    <style>
+      #map {
+        height: 600px;
+        width: 100%;
+        background: #f8f9fa;
+      }
+      .layer-item {
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+      }
+      .layer-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+      .layer-item.active {
+        background-color: rgba(0, 123, 255, 0.1);
+        border-left: 3px solid #007bff;
+      }
+      .epsg-badge {
+        background-color: #6c757d;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.75em;
+      }
+      #info {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        max-width: 300px;
+        display: none;
+      }
+      .info-success {
+        border-left: 3px solid #28a745;
+        display: block !important;
+      }
+      .info-error {
+        border-left: 3px solid #dc3545;
+        display: block !important;
+      }
+    </style>
+  </head>
+  <body class="about-page">
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center fixed-top">
+      <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+          <h1 class="sitename">Wonderful Klaten</h1>
+        </a>
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <li><a href="index.html" class="active">Beranda</a></li>
+            <li><a href="about.html">Tentang</a></li>
+            <li><a href="dashboard_diagram.html">Statistik Wisata</a></li>
+            <li><a href="peta_inter.html">Peta Interaktif</a></li>
+            <li class="dropdown">
+              <a href="#"><span>Yang Kamu Butuhkan</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <ul>
+                <li><a href="unduh_data.html">Data Spasial</a></li>
+                <li class="dropdown">
+                  <a href="#"><span>Analisis</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                  <ul>
+                    <li><a href="peta_digital.html">Peta Digital Klaten</a></li>
+                    <li><a href="fas_terdekat.html">Fasilitas Umum Terdekat</a></li>
+                    <li><a href="rawan_bencana.html">Zona Rawan Bencana</a></li>
+                    <li><a href="lingkungan.html">Pemantauan Lingkungan Sekitar</a></li>
+                  </ul>
+                </li>
+                <li><a href="contact.html">Kontak</a></li>
+              </ul>
+            </li>
+            <li><a href="login.php">login</a></li>
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="page-title dark-background">
+        <div class="container position-relative">
+          <h1>Data Spasial</h1>
+          <p>Unduh Shapefile Data Spasial yang kamu butuhkan secara cepat dengan klik tombol "Unduh SHP"</p>
+          <nav class="breadcrumbs">
+            <ol>
+              <li><a href="index.html">Beranda</a></li>
+              <li class="current">Yang Kamu Butuhkan</li>
+              <li class="current">Analisis</li>
+              <li class="current">Data Spasial</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <section id="about" class="about section light-background">
+        <div class="container">
+          <div id="layer-list" class="my-4"></div>
+          <div id="map"></div>
+          <div id="info"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer dark-background">
+      <div class="container footer-top">
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6 footer-about">
+            <a href="index.html" class="d-flex align-items-center">
+              <span class="sitename">Wonderful Klaten</span>
+            </a>
+          </div>
+
+          <div class="col-lg-2 col-md-3 footer-links">
+            <h4>Tautan Cepat</h4>
+            <ul>
+              <li><i class="bi bi-chevron-right"></i> <a href="index.html">Beranda</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="about.html">Tentang</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="peta_inter.html">Peta Interaktif</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="contact.html">Kontak</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 col-md-3 footer-links">
+            <h4>Layanan Kami</h4>
+            <ul>
+              <li><i class="bi bi-chevron-right"></i> <a href="peta_inter.html">Peta Interaktif</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="dashboard_diagram.html">Statisitik Wisata</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="fas_terdekat.html">Fasilitas Terdekat Wisata</a></li>
+              <li><i class="bi bi-chevron-right"></i> <a href="unduh_data.html">Unduh Data Spasial</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-4 col-md-12">
+            <h4>Ikuti Kami</h4>
+            <p>Dapatkan informasi terbaru seputar geospasial, peta interaktif, dan analisis data dari berbagai platform sosial.</p>
+            <div class="social-links d-flex">
+              <a href="https://x.com/topiknolimit"><i class="bi bi-twitter"></i></a>
+              <a href="https://www.facebook.com/muhammadtaufikadnan"><i class="bi bi-facebook"></i></a>
+              <a href="http://instagram.com/fik.jpeg"><i class="bi bi-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/muhammad-taufik-adnan-766709292?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container copyright text-center mt-4">
+        <p>© <span>Hak Cipta</span> <strong class="px-1 sitename">Wonderful Klaten</strong> <span>Semua Hak Dilindungi</span></p>
+        <div class="credits">Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a></div>
+      </div>
+    </footer>
+
+    <!-- Script OpenLayers -->
+    <script>
+      // Daftar proyeksi yang didukung
+      const PROJECTIONS = {
+        4326: "EPSG:4326",
+        32749: "EPSG:32749",
+      };
+
+      // Definisi EPSG:32749
+      proj4.defs("EPSG:32749", "+proj=utm +zone=49 +south +datum=WGS84 +units=m +no_defs");
+      ol.proj.proj4.register(proj4);
+
+      // LAYERS dengan 18 entri asli Anda
+      const LAYERS = [
+        { name: "Aksesibilitas_wisata_air_klaten", title: "Aksesibilitas Wisata Air Klaten", epsg: "4326", icon: "bi-signpost" },
+        { name: "PERAIRAN_LN", title: "Perairan", epsg: "32749", icon: "bi-droplet" },
+        { name: "PARIWISATA_PT", title: "Pariwisata", epsg: "4326", icon: "bi-camera" },
+        { name: "PERTANIAN_AR", title: "Pertanian", epsg: "32749", icon: "bi-tree" },
+        { name: "Kawasan_Pertanian_Dampak_Wisata_Air", title: "Dampak Wisata pada Pertanian", epsg: "4326", icon: "bi-arrow-left-right" },
+        { name: "Batas_Admin_Desa", title: "Batas Desa", epsg: "32749", icon: "bi-map" },
+        { name: "RAWAN_BENCANA_3BANJIR_AR", title: "Area Rawan Banjir", epsg: "32749", icon: "bi-cloud-rain-heavy" },
+        { name: "batas_kecamatan", title: "Batas Kecamatan", epsg: "32749", icon: "bi-boundary" },
+        { name: "Wisata_Air_Klaten", title: "Wisata Air Klaten", epsg: "4326", icon: "bi-water" },
+        { name: "sebaran_fasum", title: "Sebaran Fasilitas Umum", epsg: "32749", icon: "bi-building" },
+        { name: "rawan_bjr", title: "Rawan Bencana", epsg: "4326", icon: "bi-exclamation-triangle" },
+        { name: "TRANSPORTASI_LN", title: "Jaringan Transportasi", epsg: "32749", icon: "bi-bus-front" },
+        { name: "akses_pejalan_kaki", title: "Akses Pejalan Kaki", epsg: "4326", icon: "bi-person-walking" },
+        { name: "02_SEBARAN_FASUM_FASOS_PT", title: "Fasilitas Sosial", epsg: "32749", icon: "bi-hospital" },
+        { name: "Kawasan_Pertanian_Terdampak_Langsung_wisata_air", title: "Pertanian Terdampak Langsung", epsg: "4326", icon: "bi-arrow-down-up" },
+        { name: "KRB_Merapi", title: "Kawasan Rawan Bencana Merapi", epsg: "32749", icon: "bi-volcano" },
+        { name: "Aksesibilitas_Kendaraan_Wisata_Air_Klaten", title: "Akses Kendaraan", epsg: "4326", icon: "bi-car-front" },
+        { name: "Kepadatan_Penduduk", title: "Kepadatan Penduduk", epsg: "32749", icon: "bi-people" },
+      ];
+
+      const GEOSERVER_URL = "http://c634-103-3-220-255.ngrok-free.app/geoserver";
+      const WORKSPACE = "Sigweb";
+
+      // Inisialisasi peta
+      const map = new ol.Map({
+        target: "map",
+        layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+        view: new ol.View({
+          center: ol.proj.fromLonLat([110.5, -7.7]),
+          zoom: 11,
+        }),
+      });
+
+      let activeVectorLayer = null;
+      const layerList = document.getElementById("layer-list");
+      const infoDiv = document.getElementById("info");
+
+      function showInfo(msg, isError = false) {
+        infoDiv.innerHTML = msg;
+        infoDiv.className = isError ? "info-error" : "info-success";
+        setTimeout(() => {
+          infoDiv.innerHTML = "";
+          infoDiv.className = "";
+        }, 5000);
+      }
+
+      function displayLayer(layer) {
+        if (activeVectorLayer) map.removeLayer(activeVectorLayer);
+
+        const url = `${GEOSERVER_URL}/${WORKSPACE}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${WORKSPACE}:${layer.name}&outputFormat=application/json`;
+        const source = new ol.source.Vector({ format: new ol.format.GeoJSON(), url, strategy: ol.loadingstrategy.bbox });
+
+        activeVectorLayer = new ol.layer.Vector({
+          source,
+          style: (feat) => {
+            const geom = feat.getGeometry().getType();
+            if (/Polygon/.test(geom))
+              return new ol.style.Style({
+                stroke: new ol.style.Stroke({ color: "rgba(0,123,255,0.8)", width: 2 }),
+                fill: new ol.style.Fill({ color: "rgba(0,123,255,0.2)" }),
+              });
+            if (/LineString/.test(geom))
+              return new ol.style.Style({
+                stroke: new ol.style.Stroke({ color: "rgba(220,53,69,0.8)", width: 3 }),
+              });
+            return new ol.style.Style({
+              image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({ color: "rgba(40,167,69,0.8)" }),
+                stroke: new ol.style.Stroke({ color: "#fff", width: 2 }),
+              }),
+            });
+          },
+        });
+
+        source.on("addfeature", (e) => {
+          e.feature.getGeometry().transform(PROJECTIONS[layer.epsg], "EPSG:3857");
+        });
+
+        source.once("change", () => {
+          if (source.getState() === "ready") {
+            const ext = source.getExtent();
+            if (ext && !ol.extent.isEmpty(ext)) {
+              map.getView().fit(ext, { padding: [50, 50, 50, 50], maxZoom: 14 });
+            }
+          }
+        });
+
+        source.on("featuresloaderror", () => {
+          showInfo(`Gagal memuat layer ${layer.title}. Periksa konfigurasi GeoServer.`, true);
+        });
+
+        map.addLayer(activeVectorLayer);
+      }
+
+      function downloadLayer(layer) {
+        const url = `${GEOSERVER_URL}/${WORKSPACE}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${WORKSPACE}:${layer.name}&outputFormat=shape-zip`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${layer.title.replace(/\s+/g, "_")}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showInfo(`Unduhan layer ${layer.title} dimulai...`);
+      }
+
+      // Render daftar layer
+      LAYERS.forEach((layer) => {
+        const item = document.createElement("div");
+        item.className = "layer-item";
+        item.innerHTML = `
+          <div class="layer-title">
+            <i class="bi ${layer.icon}"></i> ${layer.title}
+            <span class="epsg-badge">EPSG:${layer.epsg}</span>
+          </div>
+          <div class="layer-actions">
+            <button class="view-btn">Tampilkan</button>
+            <button class="download-btn">Unduh SHP</button>
+          </div>`;
+        layerList.appendChild(item);
+
+        item.querySelector(".view-btn").addEventListener("click", () => {
+          document.querySelectorAll(".layer-item").forEach((el) => el.classList.remove("active"));
+          item.classList.add("active");
+          displayLayer(layer);
+        });
+
+        item.querySelector(".download-btn").addEventListener("click", (e) => {
+          e.stopPropagation();
+          downloadLayer(layer);
+        });
+      });
+
+      // Tampilkan layer pertama
+      if (LAYERS.length) {
+        const first = layerList.querySelector(".layer-item");
+        first.classList.add("active");
+        displayLayer(LAYERS[0]);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+var json_wisata_Air_rawan_gunung_berapi_15 = {"type":"FeatureCollection","name":"wisata_Air_rawan_gunung_berapi_15","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[]}
